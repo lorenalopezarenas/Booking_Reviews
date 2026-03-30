@@ -1,7 +1,10 @@
-# PROYECTO EDA + VISUALIZACIONES - BOOKING-REVIEWS
+# PROYECTO BOOKING-REVIEWS
 
 ## Objetivo del proyecto 🚀
+EDA + Visualizaciones (PowerBI)
 
+Analizar cómo la experiencia de los huéspedes (reviews positivas/negativas) se relaciona con tipo de reserva, cancelaciones, duración de estadía, y ubicación.
+Generar un dataset consolidado por país y mes para estudios de satisfacción, tendencias de reservas y posibles problemas recurrentes.
 ---------------------------------------------------------------------------------------------------------
 
 ## Fuentes de datos 📂
