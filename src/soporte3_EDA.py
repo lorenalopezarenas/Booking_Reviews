@@ -24,7 +24,7 @@ def columnas_df(df):
     Args:
         df: DataFrame
     """
-
+    
     print("\n\nLas columnas del DataFrame que estamos analizando son:\n")
     display(df.columns)
     print('\n\n------------------------------------------------------------------\n')
@@ -57,24 +57,29 @@ def boxplots(df):
 
     for col in col_num:
         plt.figure(figsize=(6, 1))
-        sns.boxplot(x=df[col], color="darkmagenta")
+        sns.boxplot(x=df[col], color="DarkSlateBlue")
         plt.title(col)
         plt.show()
 
 #------------------------------------------------------------------------------------------
 
 # -------------Función para mostrar gráficos de barras de columnas categóricas-------------
-def graficos_categoricos(df, rotar_columnas=None, angulo=45):
+def graficos_categoricos(df, excluir_columnas=None, rotar_columnas=None, angulo=45):
     """Función que grafica todas las columnas categóricas de un DataFrame.
     
     Args:
         df: DataFrame
+        excluir_columnas: lista de columnas a excluir
         rotar_columnas: lista de columnas cuyo eje X se debe rotar
         angulo: ángulo de rotación para esas columnas
     """
     
     # Seleccionar todas las columnas categóricas
     col_cat = df.select_dtypes(include=['category', 'str'])
+
+    # Excluir columnas si se especifica
+    if excluir_columnas:
+        col_cat = col_cat.drop(columns=excluir_columnas, errors='ignore')
     
     # Configurar el tamaño de los gráficos
     for col in col_cat:
@@ -198,7 +203,7 @@ def grafica_correlacion(df):
     corr = col_num.corr()
 
     # Mapa de colores personalizado
-    colors = ["white", "lightgrey", "darkmagenta"]  # baja → alta correlación
+    colors = ["white", "lightgrey", "DarkSlateBlue"]  # baja → alta correlación
     cmap = LinearSegmentedColormap.from_list("custom_cmap", colors)
 
     # Dibujar el heatmap
