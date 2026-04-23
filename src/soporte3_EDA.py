@@ -9,43 +9,6 @@ from matplotlib.colors import LinearSegmentedColormap
 
 # ------------------------------FUNCIONES------------------------------
 
-# -------------Función para un análisis de columnas-------------
-def columnas_df(df):
-    """Función que nos proporciona un análisis de las columnas del DataFrame.
-       
-       Este análisis incluye:
-       - Listado del nombre de las columnas.
-       - Información general del DataFrame (nulos, tipos de datos, etc.).
-       - Listado de las variables numéricas.
-       - Listado de las variables categóricas.
-       - Estadísticas descriptivas de las variables numéricas.
-       - Estadísticas descriptivas de las variables categóricas.
-    
-    Args:
-        df: DataFrame
-    """
-    
-    print("\n\nLas columnas del DataFrame que estamos analizando son:\n")
-    display(df.columns)
-    print('\n\n------------------------------------------------------------------\n')
-
-    print("Información básica de las columnas:\n")
-    df.info()
-    print('\n------------------------------------------------------------------\n')
-
-    col_num = df.select_dtypes(include='number').columns
-    print("Variables numéricas:\n\n", col_num)
-    col_cat = df.select_dtypes(include=['category', 'str']).columns
-    print("\n\nVariables categóricas:\n\n", col_cat)
-    print('\n------------------------------------------------------------------\n')
-
-    print("Estadísticos de las variables numéricas:\n")
-    display(df.describe().round(2).T)
-    print("\n\nEstadísticos de las variables categóricas:\n")
-    display(df.describe(include=['category', 'str']).T)
-
-#------------------------------------------------------------------------------------------
-
 # -------------Función para mostrar gráficos de bigotes de las columnas numéricas-------------
 def boxplots(df):
     """Función que grafica todas las columnas numéricas de un DataFrame.
@@ -63,129 +26,73 @@ def boxplots(df):
 
 #------------------------------------------------------------------------------------------
 
-# -------------Función para mostrar gráficos de barras de columnas categóricas-------------
-def graficos_categoricos(df, excluir_columnas=None, rotar_columnas=None, angulo=45):
-    """Función que grafica todas las columnas categóricas de un DataFrame.
-    
-    Args:
-        df: DataFrame
-        excluir_columnas: lista de columnas a excluir
-        rotar_columnas: lista de columnas cuyo eje X se debe rotar
-        angulo: ángulo de rotación para esas columnas
-    """
-    
-    # Seleccionar todas las columnas categóricas
-    col_cat = df.select_dtypes(include=['category', 'str'])
+# -------------Función para generar una gráfica de barrras apiladas-------------
+def crosstab(df, col1, col2):
+    """Función enera una gráfica de barras apiladas a partir de una tabla de contingencia (crosstab)
+    entre dos variables categóricas.
 
-    # Excluir columnas si se especifica
-    if excluir_columnas:
-        col_cat = col_cat.drop(columns=excluir_columnas, errors='ignore')
+    La función normaliza los valores por fila para mostrar proporciones y permite visualizar
+    la relación entre ambas variables de forma comparativa.
+
+    Args:
+        df: DataFrame 
+        col1: Variable categórica en el eje X
+        col2: Variable categórica representada en el color 
+
+    """
+    pd.crosstab(
+    df[col1], 
+    df[col2], 
+    normalize="index"
     
-    # Configurar el tamaño de los gráficos
-    for col in col_cat:
-        num_categories = df[col].nunique()
-        width = max(4, num_categories)
-        height = 2
-        plt.figure(figsize=(width, height))
-        
-        # Generar los gráficos
-        sns.countplot(x=col, data=df, order=df[col].value_counts().index, color='darkmagenta')
-        plt.title(f"Distribución de {col}")
-        plt.xlabel(col)
-        plt.ylabel("Frecuencia")
-        
-        # Rotar solo las columnas indicadas
-        if rotar_columnas and col in rotar_columnas:
-            plt.xticks(rotation=angulo, ha='right')
-        
-        # Mostrar los gráficos
-        plt.show()
+    ).plot(
+        kind="bar",
+        stacked=True,
+        figsize=(8,5),
+        color=["lightblue", "DarkSlateBlue", "darkgray"]
+    )
+
+    plt.xticks(rotation=45)
+    plt.title(f"{col1} vs {col2}")
+    plt.tight_layout()
+    plt.show()
 
 #------------------------------------------------------------------------------------------
 
-# -------------Función para mostrar gráficos de caja y bigotes de la variable objetivo vs variable numérica-------------
-def number_vs_target(df, target):
-    """Función que muestra gráficos de caja y bigotes de la variable objetivo vs variable numérica.
+# -------------Función para generar un gráfico de dispersión-------------
+def scatterplot (df, x, y): 
+    """Genera un gráfico de dispersión (scatter plot) entre dos variables numéricas.
+
+    El gráfico permite visualizar la relación entre las variables especificadas,
+    mostrando posibles correlaciones, patrones o valores atípicos.
 
     Args:
         df: DataFrame
-        target: variable objetivo
+        x: Nombre de la variable para el eje X
+        y: Nombre de la variable para el eje Y
     """
-    col_num = df.select_dtypes(include='number').columns 
-    
-    for col in col_num:
-        # Generar los gráficos    
-        plt.figure(figsize=(6,4))
-        sns.boxplot(x=target, y=col, data=df, color='darkmagenta')
-        plt.title(f"{col} vs {target}")
-        # Mostrar los gráficos
-        plt.show()
+    plt.figure(figsize=(6,4))
+    sns.scatterplot(data=df, x=x, y=y, alpha=0.5)
+    plt.title(f"{x} vs {y}")
+    plt.show()
 
 #------------------------------------------------------------------------------------------
 
-# -------------Función para el porcentaje de conversión de variables categóricas-------------
-def tasa_conversion_cat(df, target):
-    """Función que muestra el porcentaje de conversión de cada categoría de las variables categóricas.
-    Args:
-        df: DataFrame
-        target: variable objetivo
-    """
-    col_cat = df.select_dtypes(include=['category', 'str']).columns
-
-    for col in col_cat:
-        if col == target:
-            continue
-
-        print(f'VARIABLE: {col.upper()}\n')
-        
-        conversion_rate = df.groupby(col)[target].apply(lambda x: (x == 'yes').mean().round(4)*100) 
-        conversion_rate = conversion_rate.sort_values(ascending=False)
-        
-        print(conversion_rate)
-        print('\n--------------------------------------\n')
-
-#------------------------------------------------------------------------------------------
-
-# -------------Función para mostrar gráficos de la tasa de conversión de variables categóricas-------------
-def grafs_conversion_cat(df, target, rotar_columnas=None, angulo=45):
-    """Función que grafica la tasa de conversión de cada categoría de las variables categóricas.
+# -------------Función para generar gráficos de bigotes de dos variables-------------
+def boxplots_bi (df, x, y):
+    """Genera un gráfico de cajas (boxplot) para analizar la distribución de una variable numérica
+    en función de una variable categórica.
 
     Args:
         df: DataFrame
-        rotar_columnas: lista de columnas cuyo eje X se debe rotar
-        angulo: ángulo de rotación para esas columnas (45 por defecto)
+        x: Variable categórica en el eje X
+        y: Variable numérica en el eje Y
     """
-
-    # Seleccionar todas las columnas categóricas
-    col_cat = df.select_dtypes(include=['category', 'str'])
-
-    for col in col_cat:
-        if col == target:
-            continue
-        
-        # Función de la tasa de conversión
-        conversion_rate = df.groupby(col)[target].apply(lambda x: (x == 'yes').mean()*100).sort_values(ascending=False)
-        
-        # Ajustar las gráficas al número de categorías
-        num_categories = df[col].nunique()
-        width = max(4, num_categories)
-        height = 2
-        plt.figure(figsize=(width, height))
-        
-        # Generar las gráficas
-        conversion_rate.plot(kind='bar', color='darkmagenta')
-        plt.title(f'Tasa de Conversión por {col}')
-        plt.ylabel('Tasa de Conversión (%)')
-        plt.xlabel(col)
-        
-        # Rotar solo las columnas indicadas
-        if rotar_columnas and col in rotar_columnas:
-            plt.xticks(rotation=angulo, ha='right')
-        else:
-            plt.xticks(rotation=0, ha='center') 
-        
-        # Mostrar las gráficas
-        plt.show()
+    plt.figure(figsize=(7,4))
+    sns.boxplot(data=df, x=x, y=y, color="DarkSlateBlue")
+    plt.title(f"{x} vs {y}")
+    plt.xticks(rotation=45)
+    plt.show()
 
 #------------------------------------------------------------------------------------------
 
