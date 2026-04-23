@@ -94,10 +94,10 @@ El proyecto se ha desarrollado en varias fases:
 
 Este proyecto usa Python 3.14.0 y requiere las siguientes bibliotecas:
 
-pandas
-numpy
-matplotlib
-seaborn
+- pandas
+- numpy
+- matplotlib
+- seaborn
 
 ---------------------------------------------------------------------------------------------------------
 
