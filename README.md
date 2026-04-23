@@ -43,7 +43,15 @@ Contiene información sobre la experiencia del cliente:
 
 El proyecto se ha desarrollado en varias fases:
 
-### 1.Análisis preliminar
+### 1. Análisis preliminar
+
+- Revisión de la estructura general de ambos datasets (dimensiones, tipos de variables y consistencia de los datos).
+
+- Detección de valores nulos, duplicados y posibles inconsistencias.
+- Exploración de la relación entre ambos datasets y viabilidad de su integración.
+- Identificación de posibles claves de unión entre información operativa (reservas) y experiencia del cliente (reviews).
+- Formulación de hipótesis iniciales sobre cancelaciones, comportamiento del cliente y nivel de satisfacción.
+- Análisis preliminar de la distribución de variables relevantes como lead time, duración de estancia y tipo de cliente.
 
 ### 2. Limpieza y preprocesamiento de datos
 
@@ -84,7 +92,7 @@ El proyecto se ha desarrollado en varias fases:
 
 ## Instalación y requisitos 🛠️
 
-Este proyecto usa Python Python 3.14.0 y requiere las siguientes bibliotecas:
+Este proyecto usa Python 3.14.0 y requiere las siguientes bibliotecas:
 
 pandas
 numpy
